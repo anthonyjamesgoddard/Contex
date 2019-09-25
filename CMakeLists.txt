@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8.9)
+set(CMAKE_CXX_STANDARD 14)
+include_directories(.) 
+project (contex)
+add_executable(contex contex/main.cpp)
