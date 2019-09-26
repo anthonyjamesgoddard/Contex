@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <list>
-#include <map>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -55,7 +55,7 @@ std::string strip_punc(std::string& word) {
 
 // this needs some work.
 // it costs O(N_numberOfWordsInCorpus*log(N_numberOfQueries)
-void tokenise(std::fstream& file, std::map<std::string, int>& query_map,
+void tokenise(std::fstream& file, std::unordered_map<std::string, int>& query_map,
               std::vector<std::string>& split_string,
               std::vector<int>& full_stops, std::list<std::pair<int, int>>& l) {
     std::string line;
@@ -96,13 +96,14 @@ void tokenise(std::fstream& file, std::map<std::string, int>& query_map,
     }
 }
 
-void write_context(std::fstream& file, std::map<std::string, int>& query_map) {
+void write_context(std::fstream& file, std::unordered_map<std::string, int>& query_map) {
     // tokenise the document
     std::string line;
     std::vector<std::string> split_string;
     std::vector<int> full_stops = {-1};
     std::list<std::pair<int, int>> l;
     tokenise(file, query_map, split_string, full_stops, l);
+    
 
     // at this point we have a list of pairs l
     // the first enrtry in the pair gives us the location of
@@ -204,8 +205,7 @@ void write_context(std::fstream& file, std::map<std::string, int>& query_map) {
     }
 }
 
-void read_pairs(std::fstream& file,
-                std::map<std::string, int>& query_map) {
+void read_pairs(std::fstream& file, std::unordered_map<std::string, int>& query_map) {
     int i;
     std::string s;
     char a;
@@ -240,7 +240,7 @@ int main(int argc, char** argv) {
         // open a file that contains the list
         std::fstream listfile(list_file_name);
         // read the list into a std::list (doubly linked list)
-        std::map<std::string, int> query_map;
+        std::unordered_map<std::string, int> query_map;
         read_pairs(listfile, query_map);
         // open a file to access the document
         std::fstream docfile(doc_file_name);
