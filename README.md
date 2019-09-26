@@ -1,5 +1,35 @@
 # Contex
 
+This is tool that is used to gain some insight into how words appear in a plain text document. Contex currently works as
+follows. 
+
+```
+contex -f "corpusdata/frankens.txt" -l "list.txt"
+```
+where
+```
+-f specifies the document
+-l specifies the list of queries 
+```
+The list of queries are in the following format
+```
+string_query1 ,number_of_words_after_query1_to_highlight
+string_query2 ,number_of_words_after_query2_to_highlight
+...
+```
+Contex will find all queries even if they are peppered with puncuation. Each query forms a window of five words either
+side of the total query and will truncate this window if a full stop is encountered. If there is an overlap in query
+windows then these windows are merged into a larger query window. 
+
+we get the following output for the input list
+```
+cat ,3
+why ,1
+```
+
+![output](output.png)
+
+
 Build:
 
 ```
@@ -8,26 +38,6 @@ make -C build
 
 ```
 
-Run:
-```
-./build/contex -f "corpusdata/frankens.txt" -l "list.txt"
-```
-
-The list.txt has the following format
-```
-workindex,numberofwordsinquery
-```
-
-This workflow is subject to change. We would like to pass in words that we would like to query and how many words either
-side. This will be implemented shortly.
 
 
-The above input outputs 
 
-```
-
-WONDERLAND *** ALICE’S ADVENTURES IN WONDERLAND Lewis Carroll THE MILLENNIUM FULCRUM EDITION 3 .
- her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister ... when suddenly a White Rabbit with pink eyes ran close by her .
- TOOK A WATCH OUT OF ITS WAISTCOAT-POCKET, and looked at it, and then hurried on, Alice started to her ... straight on like a tunnel for some way, and then dipped suddenly ... of the well, and noticed that they were filled with cupboards and ... else to do, so Alice soon began talking again .
-
-```

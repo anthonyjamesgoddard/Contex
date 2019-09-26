@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <list>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -41,22 +42,51 @@ bool comp(const std::pair<int, int>& a, const std::pair<int, int>& b) {
     return (a.first < b.first);
 }
 
-void write_context(std::fstream& file, std::list<std::pair<int, int>>& l) {
-    // sort the list
-    l.sort(comp);
+std::string strip_punc(std::string& word) {
+    auto word_nopunc = word;
+    for (int i = 0, len = word_nopunc.size(); i < len; i++) {
+        if (ispunct(word_nopunc[i])) {
+            word_nopunc.erase(i--, 1);
+            len = word_nopunc.size();
+        }
+    }
+    return word_nopunc;
+}
 
-    // tokenise the document
+// this needs some work.
+// it costs O(N_numberOfWordsInCorpus*log(N_numberOfQueries)
+void tokenise(std::fstream& file, std::map<std::string, int>& query_map,
+              std::vector<std::string>& split_string,
+              std::vector<int>& full_stops, std::list<std::pair<int, int>>& l) {
     std::string line;
-    std::vector<std::string> split_string;
-    std::vector<int> full_stops = {-1};
     int i = 0;
     while (file >> line) {
         auto full_stop_location = line.find_first_of(".");
         if (full_stop_location != string::npos) {
-            split_string.push_back(line.substr(0, full_stop_location));
+            // look at the substring to the left of the full_stop
+            auto split = line.substr(0, full_stop_location);
+            auto split_without_punc = strip_punc(split);
+            auto it = query_map.find(split_without_punc);
+            if (it != query_map.end()) {
+                l.push_back(std::make_pair(i, it->second));
+            }
+            split_string.push_back(split);
+            // add the full stop
             full_stops.push_back(++i);
-            split_string.push_back(line.substr(full_stop_location));
+            // look at the substring to the right of the full_stop
+            split = line.substr(full_stop_location);
+            split_without_punc = strip_punc(split);
+            it = query_map.find(split_without_punc);
+            if (it != query_map.end()) {
+                l.push_back(std::make_pair(i, it->second));
+            }
+            split_string.push_back(split);
         } else {
+            auto line_without_punc = strip_punc(line);
+            auto it = query_map.find(line_without_punc);
+            if (it != query_map.end()) {
+                l.push_back(std::make_pair(i, it->second));
+            }
             split_string.push_back(line);
             if (line == ".") {
                 full_stops.push_back(i);
@@ -64,15 +94,22 @@ void write_context(std::fstream& file, std::list<std::pair<int, int>>& l) {
         }
         i++;
     }
-    /* 
-    for(auto& fs: full_stops) {
-        std::cout << fs << std::endl;
-    }
-    */
-    /* tokenised output
-    for (auto& s : split_string) {
-        std::cout << s << std::endl;
-    }*/
+}
+
+void write_context(std::fstream& file, std::map<std::string, int>& query_map) {
+    // tokenise the document
+    std::string line;
+    std::vector<std::string> split_string;
+    std::vector<int> full_stops = {-1};
+    std::list<std::pair<int, int>> l;
+    tokenise(file, query_map, split_string, full_stops, l);
+
+    // at this point we have a list of pairs l
+    // the first enrtry in the pair gives us the location of
+    // an instance of a query and the second gives us
+    // the number of words right of the query that we wish to
+    // analyse
+
     // obtain windows that respect full stops
     int id_fs = 0;
     int log_id = 0;
@@ -158,7 +195,8 @@ void write_context(std::fstream& file, std::list<std::pair<int, int>>& l) {
             std::cout << " ";
         }
         // if ... then words have been ommited
-        if (!std::binary_search(full_stops.begin(), full_stops.end(), o[2]+1)) {
+        if (!std::binary_search(full_stops.begin(), full_stops.end(),
+                                o[2] + 1)) {
             std::cout << "...";
         } else {
             std::cout << "." << std::endl;
@@ -166,14 +204,15 @@ void write_context(std::fstream& file, std::list<std::pair<int, int>>& l) {
     }
 }
 
-std::list<std::pair<int, int>> read_pairs(std::fstream& file) {
-    std::list<std::pair<int, int>> l;
-    int i, j;
+void read_pairs(std::fstream& file,
+                std::map<std::string, int>& query_map) {
+    int i;
+    std::string s;
     char a;
-    while (file >> i >> a >> j) {
-        l.emplace_back(std::make_pair(i, j));
+    while (file >> s >> a >> i) {
+        std::cout << s << " " << i << std::endl;
+        query_map[s] = i;
     }
-    return l;
 }
 
 const std::string usage =
@@ -201,11 +240,12 @@ int main(int argc, char** argv) {
         // open a file that contains the list
         std::fstream listfile(list_file_name);
         // read the list into a std::list (doubly linked list)
-        auto l = read_pairs(listfile);
+        std::map<std::string, int> query_map;
+        read_pairs(listfile, query_map);
         // open a file to access the document
         std::fstream docfile(doc_file_name);
         // write_context function extracts context from the document
-        write_context(docfile, l);
+        write_context(docfile, query_map);
     } else {
         std::cout << "read usage! : Missing arguments/empty filename!"
                   << std::endl;
