@@ -3,8 +3,16 @@
 This is tool that is used to gain some insight into how words appear in a plain text document. Contex currently works as
 follows. 
 
+Build:
+
 ```
-contex -f "corpusdata/frankens.txt" -l "list.txt"
+cmake -H. -Bbuild && make -C build
+
+```
+Run:
+
+```
+./build/contex -f "tests/data/frankens.txt" -l "tests/data/queries/list.txt"
 ```
 where
 ```
@@ -28,16 +36,4 @@ why ,1
 ```
 
 ![output](output.png)
-
-
-Build:
-
-```
-cmake -H. -Bbuild
-make -C build
-
-```
-
-
-
 
