@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <array>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <list>
@@ -7,36 +8,7 @@
 #include <utility>
 #include <vector>
 
-using namespace std;
-
-typedef std::array<int, 3> window;
-
-bool overlap(window& w1, window& w2) {
-    if (w1[0] >= w2[0] && w1[0] <= w2[2]) return true;
-    if (w2[0] >= w1[0] && w2[0] <= w1[2]) return true;
-    return false;
-}
-
-std::vector<window> merge_sorted_winds(std::vector<window>& ws) {
-    std::vector<window> outs;
-    if (!ws.size()) return outs;
-    window out = ws[0];
-    for (int i = 1; i < ws.size(); i++) {
-        if (overlap(out, ws[i])) {
-            out[2] = ws[i][2];
-        } else {
-            outs.push_back(out);
-            out = ws[i];
-        }
-        if (i == ws.size() - 1) outs.push_back(out);
-    }
-
-    for (auto& o : outs) {
-        std::cout << o[0] << " " << o[2] << std::endl;
-    }
-
-    return outs;
-}
+#include "contex/base/window.hpp"
 
 bool comp(const std::pair<int, int>& a, const std::pair<int, int>& b) {
     return (a.first < b.first);
