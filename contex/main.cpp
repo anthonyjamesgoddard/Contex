@@ -10,21 +10,6 @@
 
 #include "contex/base/window.hpp"
 
-bool comp(const std::pair<int, int>& a, const std::pair<int, int>& b) {
-    return (a.first < b.first);
-}
-
-std::string strip_punc(std::string& word) {
-    auto word_nopunc = word;
-    for (int i = 0, len = word_nopunc.size(); i < len; i++) {
-        if (ispunct(word_nopunc[i])) {
-            word_nopunc.erase(i--, 1);
-            len = word_nopunc.size();
-        }
-    }
-    return word_nopunc;
-}
-
 // this needs some work.
 // it costs O(N_numberOfWordsInCorpus*log(N_numberOfQueries)
 void tokenise(std::fstream& file, std::unordered_map<std::string, int>& query_map,
@@ -34,7 +19,7 @@ void tokenise(std::fstream& file, std::unordered_map<std::string, int>& query_ma
     int i = 0;
     while (file >> line) {
         auto full_stop_location = line.find_first_of(".");
-        if (full_stop_location != string::npos) {
+        if (full_stop_location != std::string::npos) {
             // look at the substring to the left of the full_stop
             auto split = line.substr(0, full_stop_location);
             auto split_without_punc = strip_punc(split);
