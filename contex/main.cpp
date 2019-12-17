@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "contex/base/window.hpp"
+#include "contex/base/word.hpp"
 
 // this needs some work.
 // it costs O(N_numberOfWordsInCorpus*log(N_numberOfQueries)
@@ -21,7 +22,7 @@ void tokenise(std::fstream& file, std::unordered_map<std::string, int>& query_ma
         auto full_stop_location = line.find_first_of(".");
         if (full_stop_location != std::string::npos) {
             // look at the substring to the left of the full_stop
-            auto split = line.substr(0, full_stop_location);
+            contex::base::word split(line.substr(0, full_stop_location));
             auto split_without_punc = strip_punc(split);
             auto it = query_map.find(split_without_punc);
             if (it != query_map.end()) {
