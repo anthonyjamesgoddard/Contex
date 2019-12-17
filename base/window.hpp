@@ -14,7 +14,6 @@ public:
     void end(std::size_t e) { m_data[2] = e; }
 
 private:
-    // maybe make this atomic?
     std::array<std::size_t, 3> m_data;
 };
 
