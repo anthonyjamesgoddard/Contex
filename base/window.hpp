@@ -1,4 +1,6 @@
 #include <array>
+#include <iostream>
+#include <vector>
 
 namespace contex {
 namespace base {
