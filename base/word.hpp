@@ -1,3 +1,5 @@
+#pragma once
+
 #include <algorithm>
 #include <string>
 //! A word in contex is a string that is endowed with
@@ -6,10 +8,11 @@ namespace contex {
 namespace base {
 class word {
 public:
-    explicit word() {};
-    explicit word(std::string& s) {};
+    explicit word(){};
+    explicit word(std::string& s) { m_word = s; };
+    explicit word(std::string&& s) { m_word = std::move(s); }
 
-    word& operator=(std::string& s) {
+    word& operator=(std::string s) {
         m_word = s;
         return *this;
     }
@@ -17,7 +20,11 @@ public:
         m_word = w.m_word;
         return *this;
     }
+
+    const std::string& as_string() const { return m_word; }
+
     word rmv_punc() const;
+
 private:
     std::string m_word;
 };
@@ -32,3 +39,13 @@ inline word word::rmv_punc() const {
 
 }  // namespace base
 }  // namespace contex
+
+namespace std {
+template <>
+struct hash<contex::base::word> {
+    std::size_t operator()(const contex::base::word& w) const {
+        return hash<std::string>()(w.as_string());
+    }
+};
+}  // namespace std
+

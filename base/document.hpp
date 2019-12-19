@@ -10,15 +10,19 @@ public:
     document() = delete;
     document(std::string file_name) { m_doc_stream = std::fstream(file_name); }
 
+    bool operator>>(contex::base::word& w) const;
+
 private:
     mutable std::fstream m_doc_stream;
 };
 
-std::istream& operator>>(const document& is, contex::base::word& w) {
+bool document::operator>>(contex::base::word& w) const {
     std::string temp;
-    is >> temp;
-    w = temp;
-    return is;
+    if (m_doc_stream >> temp) {
+        w = temp;
+        return true;
+    }
+    return false;
 }
 
 }  // namespace base

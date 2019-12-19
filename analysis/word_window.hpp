@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include <iostream>
+
 namespace contex {
 namespace analysis {
 // clang-format off
@@ -34,6 +36,7 @@ word_window::word_window(const query& q,
     std::size_t i = 0;
     while(d >> current_word) {
         i++;
+        std::cout << i << std::endl;
     }
 }
 
