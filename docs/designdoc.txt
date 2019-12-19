@@ -1,0 +1,13 @@
+// In order for a document to be processed we need it tokenised
+Document {
+   vector<words> tokenised;  // do we need to keep this after analysis? // for debug
+   std::ofstream location;   // location on harddrive
+}
+
+// A directory of analysis objects
+contex::analysis::windowed - takes in list of words
+contex::analysis::interaction - takes in list of characters OR deduces names.
+contex::analysis::...
+
+
+Everything needs to be thread safe
