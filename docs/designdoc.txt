@@ -29,4 +29,4 @@ Then the vector representation of the target word with respect to the context ba
 kitten = [1,1,0].
 
 
-
+For the bulk of the machine learning we could use mlpack (look this up on github) etc
