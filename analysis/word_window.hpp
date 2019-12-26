@@ -1,9 +1,10 @@
+#pragma once
+
 #include "contex/base/document.hpp"
 #include "contex/base/window.hpp"
-#include "contex/base/query.hpp"
+#include "contex/base/word.hpp"
 
 #include <vector>
-
 #include <iostream>
 
 namespace contex {
@@ -11,33 +12,28 @@ namespace analysis {
 // clang-format off
 
 //! This analysis object can be used to obtain a word window analysis.
-//! Current functionality is primitive. At the moment we only look at
-//! words and does not consider full stops. See blog post for implem-
-//! enting more complex functionality.
 class word_window {
-    using word      =   contex::base::word;
-    using window    =   contex::base::window;
-    using document  =   contex::base::document;
-    using query     =   contex::base::query;
+    using word              =   contex::base::word;
+    using window            =   contex::base::window;
+    using document          =   contex::base::document;
+    using word_list         =   contex::base::word_list;
+    using word_instances    =   contex::base::word_instances;
 public:
     using size = std::size_t;
-    explicit word_window(const query& q,
+    explicit word_window(const word_list& context_words,
+                         const word_list& target_words,
                          const size sz,
                          const document& d);
-private:
-    std::vector<window> m_windows;
 };
 //clang-format on
 
-word_window::word_window(const query& q,
+word_window::word_window(const word_list& context_words,
+                         const word_list& target_words,
                          const size sz,
                          const document& d) {
-    word current_word;
-    std::size_t i = 0;
-    while(d >> current_word) {
-        i++;
-        std::cout << i << std::endl;
-    }
+
+//    auto wi = contex::base::init_word_instances(context_words);
+
 }
 
 }  // namespace analysis

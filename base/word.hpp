@@ -1,9 +1,10 @@
 #pragma once
 
 #include <algorithm>
+#include <list>
+#include <map>
 #include <string>
-//! A word in contex is a string that is endowed with
-//! convienience methods
+
 namespace contex {
 namespace base {
 class word {
@@ -37,15 +38,21 @@ inline word word::rmv_punc() const {
     return word(result);
 }
 
+using word_list = std::list<contex::base::word>;
+
+using word_instances = std::map<std::list<contex::base::word>::iterator,
+                                std::vector<std::size_t>>;
+
+//! This is a conv. function that enables us to just start pushing back
+//! a word instance structure
+/*
+inline word_instances init_word_instances(const word_list& wl) {
+    word_instances wi;
+    for (auto it = wl.begin(); it != wl.end(); ++it) {
+        wi[it] = {};
+    }
+    return wi;
+}
+*/
 }  // namespace base
 }  // namespace contex
-
-namespace std {
-template <>
-struct hash<contex::base::word> {
-    std::size_t operator()(const contex::base::word& w) const {
-        return hash<std::string>()(w.as_string());
-    }
-};
-}  // namespace std
-

@@ -1,13 +1,32 @@
-// In order for a document to be processed we need it tokenised
-Document {
-   vector<words> tokenised;  // do we need to keep this after analysis? // for debug
-   std::ofstream location;   // location on harddrive
-}
 
-// A directory of analysis objects
-contex::analysis::windowed - takes in list of words
-contex::analysis::interaction - takes in list of characters OR deduces names.
-contex::analysis::...
+Next task is to write a proper window analysis.
+
+We can follow count based methods from these slides :
+https://github.com/oxford-cs-deepnlp-2017/lectures/blob/master/Lecture%202a-%20Word%20Level%20Semantics.pdf
+
+The simplest way:
+
+    + Collection of context words
+    + word window size
+    + Count the basis words occuring w words to the left or right 
+      of each target word in the corpus.
+
+    + Form a vector representation of the target word based on
+      these counts.
 
 
-Everything needs to be thread safe
+For instance if we had a target word "kitten" and a window size of 2 with context words
+["cute", "fluffy", "furry"].
+
+Then in the text we have 
+
+... the fluffy kitten ...
+... the cute kitten ...
+
+
+Then the vector representation of the target word with respect to the context basis is 
+
+kitten = [1,1,0].
+
+
+
